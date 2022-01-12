@@ -492,7 +492,7 @@ def getDefaultCmdDict(reload=False):
 
 
 def getDefaultDict(reload=False):
-    return util.getDefaultDict(__name__, 'cmddict', CmdDict, reload)
+    return util.getDefaultDict(__name__, 'cmddict', createCmdDict, reload)
 
 
 def getDefaultDictFilename():
