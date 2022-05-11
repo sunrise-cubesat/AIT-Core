@@ -111,12 +111,16 @@ class FieldList(collections.Sequence):
     by the private Packet field accessor _getattr().
     """
 
-    __slots__ = ["_defn", "_packet", "_raw"]
+    __slots__ = ["_defn", "_packet", "_raw", 'packet', 'defn', 'raw']
 
     def __init__(self, packet, defn, raw):
         self._packet = packet
         self._defn = defn
         self._raw = raw
+
+        self.packet = self._packet
+        self.defn = self._defn
+        self.raw = self._raw
 
     def __eq__(self, other):
         return (
