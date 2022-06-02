@@ -31,7 +31,7 @@ import ait
 from ait.core import cfg, cmd, dmc, evr, log, tlm
 
 from ait.core.tlm import FieldList
-
+from ait.core.dtype import ArrayType
 
 class AITDBResult:
     """AIT Database result wrapper.
@@ -345,10 +345,44 @@ class InfluxDBBackend(GenericBackend):
             if pd.history and defn.name in pd.history:
                 val = getattr(packet.history, defn.name)
 
-            if val is not None and not (isinstance(val, float) and math.isnan(val)):
-                if not isinstance(val, FieldList):
-                    fields[defn.name] = val
+            acceptable_types = (FieldList, bytes, int)
+            if not isinstance(val, acceptable_types):
+                continue
 
+            # Attempt to format based on acceptable_types
+            if isinstance(val, int):
+                fields[defn.name] = val
+                
+            elif isinstance(val, FieldList):
+                #print(val.defn._type.type)
+                if val.defn._type.type.string: # LMAO
+                    val = [str(i) for i in val]
+                    val = ",".join(val).rstrip("\x00")
+                    fields[defn.name] = val
+                else:
+                    # Hex Dump
+                    if all(isinstance(i, int) for i in val):
+                        accum = 0
+                        for i in val:
+                           accum = (accum << 8) + i
+                        val = str(hex(accum))
+                    # Vector to CSV (Remove when dictionary is fixed)
+                    elif any(isinstance(i, float) for i in val):
+                        val= [str(i) for i in val]
+                        val = ",".join(val)
+                    else:
+                        val = "ERROR IN INFLUX FIELD LIST PROCESSING"
+                        log.error(f"{__name__} {VAL}")
+                    fields[defn.name] = val
+                    
+            elif isinstance(val, bytes):
+                # Treat as string
+                val = val.decode("ascii").rstrip("\x00")
+                fields[defn.name] = val
+                #print("BYTES ", val)
+
+        #print(fields)
+            
         if len(fields) == 0:
             log.error("No fields present to insert into Influx")
             return
@@ -363,7 +397,7 @@ class InfluxDBBackend(GenericBackend):
 
         if time:
             data["time"] = time
-
+        
         self._conn.write_points([data])
 
     def _query(self, query, **kwargs):
