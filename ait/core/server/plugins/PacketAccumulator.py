@@ -50,7 +50,7 @@ class PacketAccumulator(Plugin,
             for i in self.packet_queue:
                 payload += i
             if not tctf.check_data_field_size(payload):
-                log.error("{self.log_header} created oversized payload.")
+                log.error(f"{self.log_header} created oversized payload.")
             self.publish(payload)
             self.size_packet_queue_octets = 0
             self.packet_queue.clear()

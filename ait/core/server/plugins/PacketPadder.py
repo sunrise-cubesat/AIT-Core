@@ -29,5 +29,5 @@ class PacketPadder(Plugin,
             fill = bytearray(self.size_pad_octets - len(data))
             data = data + fill
         if not tctf.check_data_field_size(data):
-            log.error(f"{self.logger} created oversized data.")
+            log.error(f"{self.log_header} created oversized data.")
         self.publish(data)
