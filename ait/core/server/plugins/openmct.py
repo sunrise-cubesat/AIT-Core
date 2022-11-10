@@ -553,6 +553,8 @@ class AITOpenMctPlugin(Plugin,
             pass
         elif topic in MessageType._member_names_:
             message = {topic: message}
+            message['sv_name'] = ait.config.get('sunrise.sv_name')
+            message['sv_identifier'] = ait.config.get('sunrise.sv_identifier')
             if topic == MessageType.FILE_DOWNLINK_RESULT.name or topic == MessageType.FILE_DOWNLINK_UPDATE.name:
                 self._process_downlink_update_msg(message)
             else:
@@ -1184,8 +1186,8 @@ class AITOpenMctPlugin(Plugin,
             subscribed_pkt = mws.create_subscribed_packet(mct_pkt)
             # If that new packet still has fields, stringify and send
             if subscribed_pkt:
-                metadata = {k:v for (k,v) in packet_metadata.items() if k != "user_data_field"}
-                t = metadata['event_time_gps'] = metadata['event_time_gps']
+                metadata = {k:v for (k,v) in packet_metadata.items() if k not in ["user_data_field", "decoded_packet", "packet_name"] }
+                t = metadata['event_time_gps']
                 t.format='iso'
                 metadata['event_time_gps'] = str(t)
                 subscribed_pkt['metadata'] = metadata
@@ -1297,10 +1299,10 @@ class AITOpenMctPlugin(Plugin,
             mws.unsubscribe_field(msg_parts[1])
         elif directive in MessageType._member_names_:
             msg = " ".join(msg_parts[1:]).strip()
-            #log.info(f"Got MessageType {msg}!")
-            self.publish(msg, directive)
+            #log.info(f"Got MessageType {msg} for directive {directive}!")
+            self.publish(msg, topic=directive)
         else:
-            self.warn(f"Unexpected web-socket message: {message}")         
+            log.warn(f"Unexpected web-socket message: {message}")
 
     # ---------------------------------------------------------------------
     # Routing rules

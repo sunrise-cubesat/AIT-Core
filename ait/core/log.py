@@ -58,6 +58,7 @@ class LogFormatter(logging.Formatter):
         Creates and returns a new LogFormatter.
         """
         format = "%(asctime)s | %(levelname)-8s | %(module)s -> %(funcName)s => %(message)s"
+        # format = "%(asctime)s | %(levelname)-8s | Line %(lineno)d | %(module)s -> %(funcName)s => %(message)s"
         datefmt = self.DATEFMT
         logging.Formatter.__init__(self, format, datefmt)
 
@@ -357,7 +358,9 @@ class AnnoyingFilter(logging.Filter):
                           "Spawning <PluginsProcess",
                           "No plugin inputs specified",
                           "No streams available for telemetry API",
-                          
+                          "Replacing ait",
+                          "Running AIT OpenMCT Plugin",
+                          "[OpenMCT Database Configuration]",
                           ]
     black_list_modules = ["dmc"]
     def filter(self, record):
