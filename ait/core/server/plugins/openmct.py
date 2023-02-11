@@ -418,10 +418,10 @@ class AITOpenMctPlugin(Plugin,
         self._servers = []
 
         # Queues for AIT events events
-        self._tlmQueue = api.GeventDeque(maxlen=100)
+        self._tlmQueue = api.GeventDeque(maxlen=1000)
 
-        self._varMsgQueue = api.GeventDeque(maxlen=100)
-        self._downlinkMsgQueue = api.GeventDeque(maxlen=100)
+        self._varMsgQueue = api.GeventDeque(maxlen=1000)
+        self._downlinkMsgQueue = api.GeventDeque(maxlen=1000)
         
         # Load AIT tlm dict and create OpenMCT format of it
         self._aitTlmDict = tlm.getDefaultDict()
