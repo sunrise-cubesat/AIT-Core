@@ -104,9 +104,9 @@ class Tasks:
 
         def get_mime_type(self):
             ext = Path(self.filepath).suffix
-            if ext in ['.log', '.cl']:
+            if ext in ['.log', '.cl', '.ndjson']:
                 res = 'text/plain'
-            elif ext in ['.json', '.ndjson']:
+            elif ext in ['.json']:
                 res = 'application/json'
             else:
                 res = 'binary/octet-stream'
