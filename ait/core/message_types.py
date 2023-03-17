@@ -49,7 +49,11 @@ class MessageType(Enum):
     FM_PAYLOAD_UPDATE = 'Payload Updates'
     CHECK_FRAME_OUT_OF_SEQUENCE = 'Out of sequence Frames'
     CHECK_FRAME_ECF_MISMATCH = 'Mismatch of Frame ECF'
-
+    UPLINK_TRACKER_PROBE = 'Send uplink tracker Probe'
+    UPLINK_TRACKER_ZOMBIES = 'Response containing zombied uplinks'
+    UPLINK_TRACKER_STATUS = 'Request status'
+    UPLINK_TRACKER_STATUS_RESULT = 'Result to request'
+    DEPACKETIZER_REPORT = 'Depacketizer error report'
     SUNRISE_PAYLOAD_ACTIVE_FILE_DOWNLINK_INFO = 'See fgicd'
 
     def to_tuple(self):
