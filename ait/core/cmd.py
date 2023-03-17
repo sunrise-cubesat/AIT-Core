@@ -177,10 +177,14 @@ class ArgDefn(json.SlotSerializer, object):
                     log("%s value '%s' out of range [%d, %d]." % args)
                 return valid
 
-            if isinstance(value, list):
-                valid = all([check_prim_range(i) for i in value])
-            else:
-                valid = check_prim_range(primitive)
+            try:
+                if isinstance(value, list):
+                    valid = all([check_prim_range(i) for i in value])
+                else:
+                    valid = check_prim_range(primitive)
+            except Exception as e:
+                ait.core.log.error(f"Error in validation: {e}")
+                valid = False
         return valid
 
 
