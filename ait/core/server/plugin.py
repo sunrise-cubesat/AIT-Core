@@ -9,6 +9,8 @@ from .client import ZMQInputClient
 import gevent.monkey
 gevent.monkey.patch_all()
 
+import time
+import os
 
 class PluginConfig(object):
     """
@@ -152,6 +154,10 @@ class Plugin(ZMQInputClient):
             setattr(self, key, value)
 
         super(Plugin, self).__init__(**zmq_args)
+
+        if os.getenv('DOCKER'):
+            log.debug("WAITING FOR DICTIONARIES TO PICKLE")
+            time.sleep(10)
 
     def __repr__(self):
         return f"{self.name}"

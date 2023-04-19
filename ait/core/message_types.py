@@ -31,6 +31,7 @@ class MessageType(Enum):
     FILE_DOWNLINK_UPDATE = "Result of a File Dowlink Update Task"
     TASK_S3_UPLOAD_RESULT = "Result of an S3 File Upload Task"
     PANIC = "Something has thrown an exception"
+    CL_AUTO = "Automatic internally generated command uplinks"
     CL_LIST = 'List command loader scripts,\n message is path or "" '
     CL_SHOW = 'Get contents of command loader\n script or uplink info,\n message is path to\n command loader script or uplink directory'
     CL_EXECUTE = 'Have command loader execute\n a command from the dicionary,\n message is a command\n or uplink directory'
@@ -49,7 +50,11 @@ class MessageType(Enum):
     FM_PAYLOAD_UPDATE = 'Payload Updates'
     CHECK_FRAME_OUT_OF_SEQUENCE = 'Out of sequence Frames'
     CHECK_FRAME_ECF_MISMATCH = 'Mismatch of Frame ECF'
-
+    UPLINK_TRACKER_PROBE = 'Send uplink tracker Probe'
+    UPLINK_TRACKER_ZOMBIES = 'Response containing zombied uplinks'
+    UPLINK_TRACKER_STATUS = 'Request status'
+    UPLINK_TRACKER_STATUS_RESULT = 'Result to request'
+    DEPACKETIZER_REPORT = 'Depacketizer error report'
     SUNRISE_PAYLOAD_ACTIVE_FILE_DOWNLINK_INFO = 'See fgicd'
 
     def to_tuple(self):
