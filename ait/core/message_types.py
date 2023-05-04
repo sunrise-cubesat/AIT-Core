@@ -26,7 +26,6 @@ class MessageType(Enum):
     TCP_STATUS = "Number of packets transferred/received"
     KMC_STATUS = "If message is received\n, KMC Plugin is active"
     SC_STATE_OF_HEALTH_REPORT = "Spacecraft state of health report"
-    GRAFFITI_MAP = "DOT file containing AIT Pipeline" # TODO Do we want this, and does Joe want a DOT or PNG?
     FILE_DOWNLINK_RESULT = "Result of a File Downlink Reassembly Task"
     FILE_DOWNLINK_UPDATE = "Result of a File Dowlink Update Task"
     TASK_S3_UPLOAD_RESULT = "Result of an S3 File Upload Task"
