@@ -332,17 +332,27 @@ class FieldDefinition(json.SlotSerializer):
 
         val = value
         if not raw and self.enum is not None:
-            try:
-                if isinstance(val, Iterable):
-                    value = [self.enum.get(i) for i in val]
-                else:
+            value = None
+            if isinstance(val, Iterable):
+                value = []
+                for i in val:
+                    try:
+                        value.append(self.enum.get(i))
+                    except Exception as e:
+                        log.error(f"Encountered unknown enum {str(val)} in Field: {self.title}, for value {i}. Abandoning packet.")
+                        raise ValueError(f"Unknown Enum for value: {val} {e}")
+            else:
+                try:
                     value = self.enum.get(val)
-                if value is None:
-                    log.warn(f"Encountered unknown enum {str(value)} in Field: {self.title}, abandoning packet")
-                    raise ValueError(f"Unknown Enum for {value}")
-            except Exception as e:
-                log.error(f"Encountered error evaluation enum for {val}: {e}")
-                raise ValueError(f"Unknown Enum for {value}")
+                except Exception as e:
+                    log.error(f"Encountered unknown enum {str(val)} in Field: {self.title}, for value {val}. Abandoning packet.")
+                    raise ValueError(f"Unknown Enum for value: {val} {e}")
+            #log.info(f"{self.title}, {val=} {value=}")
+
+            if value is None:
+                log.error(f"Encountered unknown enum {str(val)} in Field: {self.title}. Abandoning packet.")
+                raise ValueError(f"Unknown Enum for value: {val}")
+                
         return value
 
     def encode(self, value):
@@ -579,7 +589,7 @@ class Packet:
                 log.error(f'Regular Decode Error: {e}')
                 raise e
             except Exception as e:
-                log.warn(f"error applying dntoeu: {e}")
+                log.error(f"error applying dntoeu: {e}")
                 raise e
         return value
 
@@ -634,6 +644,7 @@ class Packet:
 
     def items(self):
         for field_name in self.keys():
+            val = None
             try:
                 val = getattr(self, field_name)
                 #print(f"Got val: {val}")
@@ -641,16 +652,16 @@ class Packet:
                 #print(f"Got canonical: {type(val)}")
                 yield (field_name, val)
             except struct.error as e:
-                log.error(f"struct error: Could not decode a field {field_name} with value {val}. Abandoning packet: {e}")
+                log.error(f"struct error: For packet {self._defn.name}: Could not decode a field {field_name} with value {val}. Abandoning packet: {e}")
                 return {}
             except ValueError as e:
-                log.error(f"ValueError: Could not decode a field {field_name} with value {val}. Abandoning packet: {e}")
+                log.error(f"ValueError: For packet {self._defn.name}: Could not decode a field {field_name} with value {val}. Abandoning packet: {e}")
                 return {}
             except IndexError as e:
-                log.error(f"IndexError: Could not decode a field {field_name} with value {val}. Abandoning packet: {e}")
+                log.error(f"IndexError: For packet {self._defn.name}: Could not decode a field {field_name} with value {val}. Abandoning packet: {e}")
                 return {}
             except Exception as e:
-                log.error(f"Could not decode a field {field_name} with value {val}. Abandoning packet: {e}")
+                log.error(f"For packet {self._defn.name}: Could not decode a field {field_name} with value {val}. Abandoning packet: {e}")
                 return {}
 
     def keys(self):
