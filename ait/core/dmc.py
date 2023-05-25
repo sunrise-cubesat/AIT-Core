@@ -322,6 +322,9 @@ class UTCLeapSeconds(object):
             log.info("Loaded leapseconds config file successfully")
         except IOError:
             log.info("Unable to locate leapseconds config file")
+        except EOFError:
+            # This entire file is retarded
+            pass
 
         if not (self._data and self.is_valid()):
             try:

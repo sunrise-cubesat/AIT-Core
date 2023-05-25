@@ -1,7 +1,6 @@
 from ait.core.server.plugins import Plugin
 from ait.core import log
 from gevent import Greenlet
-import ait.dsn.plugins.Graffiti as Graffiti
 import pprint
 
 
@@ -16,7 +15,7 @@ class file_injector():
     def __repr__(self):
         a = (f"Topic: {self.topic}, Path: {self.path}, Loop: {self.loop}")
         return a
-    
+
     def run(self):
         while True:
             with open(self.path, 'rb') as reader:
@@ -37,18 +36,6 @@ class Inject_File(Plugin):
             obj = file_injector(self.publish, path, topic, loop)
             self.injectors.append(obj)
         self.once = True
-        Graffiti.wait(self)
-
-    def graffiti(self):
-        self_name = type(self).__name__
-        nodes = []
-        labels = {}
-        injectors_label = pprint.pformat(self.injectors, width=-1)
-        labels[self_name] = f"\t {injectors_label}\n"
-        node = Graffiti.Node(self_name, [], [], labels,
-                             Graffiti.Node_Type.PLUGIN)
-        nodes.append(node)
-        return nodes
 
     def process(self, data, topic=None):
         if self.once:
